@@ -1,0 +1,61 @@
+/* This styles the entire background and default text */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9; /* A soft, light gray/blue */
+    color: #333333;
+    text-align: center; /* Centers everything */
+    padding: 20px;
+}
+
+/* This makes the grocery list look cleaner */
+ul {
+    list-style-type: none; /* Removes the ugly default bullet points */
+    padding: 0;
+    max-width: 400px; /* Keeps the list from stretching across the whole screen */
+    margin: 0 auto; /* Centers the list block itself */
+}
+
+li {
+    background-color: white;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px; /* Rounds the corners of the white boxes */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a tiny drop shadow */
+    
+    /* This pushes the item text to the left and the delete button to the right */
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Let's make the Add button look like a real app button */
+button {
+    background-color: #4CAF50; /* A nice green */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049; /* Slightly darker green when you hover over it */
+}
+
+/* Your Challenge: Style the text input box */
+input[type="text"] 
+   /* This controls the layout of the form holding the text box and Add button */
+form {
+    display: flex;
+    gap: 10px; /* Puts a nice 10px gap between the box and the button */
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+/* This styles the text input box */
+input[type="text"] 
+{   flex-grow: 1; /* This tells the box to dynamically stretch to fill remaining space */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}

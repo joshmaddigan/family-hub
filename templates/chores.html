@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="text-align: center; margin-top: 20px;">
+        <h1>Family Chore Tracker</h1>
+    </div>
+
+    {% for person, chores in all_chores.items() %}
+    <div style="background-color: white; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: left;">
+        <h3>{{ person }}'s Tasks</h3>
+        <ul>
+            {% for task in chores %}
+            <li style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                
+                {{ task.chore }}
+                
+                <form action="/delete_chore" method="POST" style="display:inline;">
+                    <input type="hidden" name="chore_id" value="{{ task.id }}">
+                    <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer;">X</button>
+                </form>
+
+            </li>
+            {% endfor %}
+        </ul>
+
+        <form action="/add_chore" method="POST" style="display: flex; gap: 5px;">
+            <input type="hidden" name="person" value="{{ person }}">
+            <input type="text" name="chore_name" placeholder="New chore..." required style="flex-grow: 1;">
+            <button type="submit" style="background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    <hr style="margin: 30px 0;">
+    
+    <div style="text-align: center;">
+        <h3>Manage Family Members</h3>
+        <form action="/add_person" method="POST">
+            <input type="text" name="new_person" placeholder="Name (e.g. Dad)" required style="padding: 5px;">
+            <button type="submit" style="background-color: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Add Person</button>
+        </form>
+    </div>
+{% endblock %}

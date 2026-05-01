@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style="text-align: center; margin-top: 20px;">
+        <h1>Family Hub Bug Reports</h1>
+    </div>
+
+    <div style="max-width: 600px; margin: 0 auto;">
+        
+        <h2 style="color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Active Bugs</h2>
+        
+        {% if active_bugs %}
+            <ul style="list-style-type: none; padding: 0;">
+                {% for bug in active_bugs %}
+                    <li style="background-color: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #ff4d4d; display: flex; justify-content: space-between; align-items: flex-start;">
+                        
+                        <div style="flex-grow: 1; padding-right: 15px;">
+                            <small style="color: #666;">
+                                <strong>{{ bug.timestamp }}</strong> | Reported by: {{ bug.reported_by | capitalize }}
+                            </small>
+                            <p style="margin: 10px 0 0 0; font-size: 16px;">{{ bug.description }}</p>
+                        </div>
+
+                        <form action="/resolve_bug" method="POST" style="margin: 0;">
+                            <input type="hidden" name="bug_id" value="{{ bug.id }}">
+                            <button type="submit" style="background-color: #4CAF50; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                                ✓ Resolve
+                            </button>
+                        </form>
+
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: #4CAF50; font-weight: bold; text-align: center; padding: 20px; background-color: white; border-radius: 8px;">No active bugs! Great job.</p>
+        {% endif %}
+
+
+        <h2 style="color: #666; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 40px;">Changelog (Resolved)</h2>
+        
+        {% if resolved_bugs %}
+            <ul style="list-style-type: none; padding: 0; opacity: 0.7;">
+                {% for bug in resolved_bugs %}
+                    <li style="background-color: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #4CAF50;">
+                        <small style="color: #888;">
+                            <strong>{{ bug.timestamp }}</strong> | Reported by: {{ bug.reported_by | capitalize }}
+                        </small>
+                        <p style="margin: 10px 0 0 0; text-decoration: line-through; color: #888;">{{ bug.description }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="text-align: center; color: #888; font-style: italic;">No bugs resolved yet.</p>
+        {% endif %}
+
+    </div>
+{% endblock %}
