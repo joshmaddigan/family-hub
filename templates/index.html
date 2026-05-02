@@ -1,43 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-    
-    <div style="text-align: center; margin-top: 20px;">
-        <h1>Welcome to the Family Hub, {{ session.user | capitalize }}!</h1>
+    <div style="margin-bottom: 3rem;">
+        <h1>Welcome back, {{ session.user | capitalize }}!</h1>
     </div>
 
-    {% if temp != "Unavailable" %}
-        {% if temp <= 0 %}
-            {% set bg_color = "#e3f2fd" %} {% set icon = "❄️" %}
-        {% elif temp >= 20 %}
-            {% set bg_color = "#fff3e0" %} {% set icon = "☀️" %}
-        {% else %}
-            {% set bg_color = "white" %} {% set icon = "🌤️" %}
-        {% endif %}
-    {% else %}
-        {% set bg_color = "#f4f4f9" %} {% set icon = "❓" %}
-    {% endif %}
-
-    <div style="background-color: {{ bg_color }}; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
-        <h3>{{ icon }} Local Weather</h3>
-        <h2>{{ temp }}{% if temp != "Unavailable" %} °C{% endif %}</h2>
-    </div>
-
-  
-    <div style="background-color: white; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: left;">
-        <h3 style="text-align: center;">📅 Upcoming Appointments</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
         
-        {% if appointments %}
-            <ul style="list-style-type: none; padding: 0;">
-                {% for event in appointments %}
-                    <li style="border-bottom: 1px solid #eee; padding: 10px 0; display: block;">
-                        <strong>{{ event.summary }}</strong><br>
-                        <small style="color: #666;">{{ event.start.strftime('%b %d at %I:%M %p') }}</small>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p style="text-align: center; color: #666; font-style: italic;">No upcoming appointments.</p>
-        {% endif %}
+        <!-- Weather Card -->
+        <div class="card weather-card">
+            <h3>🌤️ Local Weather</h3>
+            <h2 style="font-size: 3rem;">{{ temp }}{% if temp != "Unavailable" %}°C{% endif %}</h2>
+            <p style="opacity: 0.8; font-weight: 500;">Currently in Belleville</p>
+        </div>
+
+        <!-- Appointments Card -->
+        <div class="card">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <span>📅</span> Upcoming Events
+            </h3>
+            
+            {% if appointments %}
+                <ul style="margin: 0;">
+                    {% for event in appointments %}
+                        <li style="flex-direction: column; align-items: flex-start; gap: 0.25rem;">
+                            <strong style="font-size: 1.1rem;">{{ event.summary }}</strong>
+                            <small style="color: var(--text-muted);">{{ event.start.strftime('%b %d at %I:%M %p') }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div style="text-align: center; padding: 2rem;">
+                    <p style="color: var(--text-muted); font-style: italic;">No upcoming events found.</p>
+                </div>
+            {% endif %}
+        </div>
+
     </div>
 {% endblock %}

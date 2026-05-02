@@ -117,23 +117,29 @@ def logout():
 @app.route('/')
 @login_required  
 def home():
-    # Weather Injection
+    # Weather Injection (Open-Meteo)
+    current_temp = "Unavailable"
     try:
+        # Belleville, ON coordinates
         url = "https://api.open-meteo.com/v1/forecast?latitude=44.18&longitude=-77.58&current_weather=true"
-        response = requests.get(url, timeout=5)  
-        data = response.json()
-        current_temp = data['current_weather']['temperature']
-    except Exception:
-        current_temp = "Unavailable"  
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            current_temp = data.get('current_weather', {}).get('temperature', "Unavailable")
+        else:
+            app.logger.error(f"Weather API returned status {response.status_code}")
+    except Exception as e:
+        app.logger.error(f"Weather fetching failed: {e}")
 
     # Calendar Injection
+    appointments = []
     try:
         secret_URL = os.environ.get('CALENDAR_URL', 'https://calendar.google.com/calendar/ical/josh.maddigan%40gmail.com/private-bcd741a8f528c29c34b74fee94de4788/basic.ics')
         upcoming_events = events(secret_URL, start=datetime.now())
         upcoming_events.sort(key=lambda x: x.start)
         appointments = upcoming_events[:5]
-    except Exception:
-        appointments = []  
+    except Exception as e:
+        app.logger.error(f"Calendar fetching failed: {e}")
 
     return render_template('index.html', temp=current_temp, appointments=appointments)
 
