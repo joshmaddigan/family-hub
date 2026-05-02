@@ -99,8 +99,8 @@ def login_required(f):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username').lower()
-        password = request.form.get('password')
+        username = request.form.get('username', '').strip().lower()
+        password = request.form.get('password', '').strip()
 
         if username in family_users and family_users[username] == password:
             session['user'] = username
