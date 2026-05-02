@@ -8,6 +8,9 @@ from datetime import datetime
 import os
 import sqlite3  
 from functools import wraps
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -97,7 +100,7 @@ def login_required(f):
 def login():
     if request.method == 'POST':
         username = request.form.get('username').lower()
-        password = request.form.get('password').lower()
+        password = request.form.get('password')
 
         if username in family_users and family_users[username] == password:
             session['user'] = username
