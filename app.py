@@ -102,11 +102,16 @@ def login():
         username = request.form.get('username', '').strip().lower()
         password = request.form.get('password', '').strip()
 
-        if username in family_users and family_users[username] == password:
+        # Debug logging for Railway logs
+        user_exists = username in family_users
+        pw_match = family_users.get(username) == password if user_exists else False
+        app.logger.info(f"LOGIN ATTEMPT: user='{username}', exists={user_exists}, match={pw_match}")
+
+        if user_exists and pw_match:
             session['user'] = username
             return redirect('/')
         else:
-            return "Incorrect password! Hit 'Back' and try again."
+            return f"Incorrect login for '{username}'! Hit 'Back' and try again."
 
     return render_template('login.html')
 
