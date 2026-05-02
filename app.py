@@ -8,27 +8,20 @@ from datetime import datetime
 import os
 import sqlite3  
 from functools import wraps
-from dotenv import load_dotenv
-
-load_dotenv()
-
 app = Flask(__name__)
-
 
 # ============================================================
 # 2. CONFIGURATION
 # ============================================================
-# This looks for a hidden variable on the server.
-# If it can't find it (like when you test on your PC), it uses a default.
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'my_local_testing_key')
+app.secret_key = 'my_local_testing_key'
 
 # Tells Flask to instantly update the website when an HTML file is saved!
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 family_users = {
-    "dad": os.environ.get('HUB_PASSWORD_DAD', 'hub123'),
-    "mom": os.environ.get('HUB_PASSWORD_MOM', 'hub123'),
-    "kara": os.environ.get('HUB_PASSWORD_KARA', 'hub123')
+    "dad": "hub123",
+    "mom": "hub123",
+    "kara": "hub123"
 }
 
 
@@ -99,19 +92,14 @@ def login_required(f):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username', '').strip().lower()
-        password = request.form.get('password', '').strip()
+        username = request.form.get('username').lower()
+        password = request.form.get('password')
 
-        # Debug logging for Railway logs
-        user_exists = username in family_users
-        pw_match = family_users.get(username) == password if user_exists else False
-        app.logger.info(f"LOGIN ATTEMPT: user='{username}', exists={user_exists}, match={pw_match}")
-
-        if user_exists and pw_match:
+        if username in family_users and family_users[username] == password:
             session['user'] = username
             return redirect('/')
         else:
-            return f"Incorrect login for '{username}'! Hit 'Back' and try again."
+            return "Incorrect password! Hit 'Back' and try again."
 
     return render_template('login.html')
 
