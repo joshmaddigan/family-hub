@@ -63,6 +63,17 @@ def init_db():
         )
     ''')
 
+    # Mileage Table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS mileage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            doctor TEXT NOT NULL,
+            distance_km REAL NOT NULL,
+            notes TEXT
+        )
+    ''')
+
     conn.commit()   
     conn.close()    
 
@@ -267,6 +278,49 @@ def resolved_bug():
         conn.commit()
         conn.close()
     return redirect('/bugs')
+
+
+# --- MILEAGE TRACKER ---
+@app.route('/mileage')
+@login_required
+def mileage():
+    conn = get_db()
+    trips = conn.execute('SELECT * FROM mileage ORDER BY date DESC').fetchall()
+    total_km = conn.execute('SELECT COALESCE(SUM(distance_km), 0) FROM mileage').fetchone()[0]
+    conn.close()
+    return render_template('mileage.html', trips=trips, total_km=total_km)
+
+@app.route('/add_trip', methods=['POST'])
+@login_required
+def add_trip():
+    date = request.form.get('date')
+    doctor = request.form.get('doctor')
+    distance_km = request.form.get('distance_km')
+    notes = request.form.get('notes', '').strip()
+    if date and doctor and distance_km:
+        try:
+            distance_km = float(distance_km)
+            conn = get_db()
+            conn.execute(
+                'INSERT INTO mileage (date, doctor, distance_km, notes) VALUES (?, ?, ?, ?)',
+                (date, doctor, distance_km, notes or None)
+            )
+            conn.commit()
+            conn.close()
+        except ValueError:
+            pass
+    return redirect('/mileage')
+
+@app.route('/delete_trip', methods=['POST'])
+@login_required
+def delete_trip():
+    trip_id = request.form.get('trip_id')
+    if trip_id:
+        conn = get_db()
+        conn.execute('DELETE FROM mileage WHERE id = ?', (trip_id,))
+        conn.commit()
+        conn.close()
+    return redirect('/mileage')
 
 
 # ============================================================
