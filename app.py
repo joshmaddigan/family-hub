@@ -322,6 +322,16 @@ def delete_trip():
         conn.close()
     return redirect('/mileage')
 
+@app.route('/mileage/print')
+@login_required
+def mileage_print():
+    conn = get_db()
+    trips = conn.execute('SELECT * FROM mileage ORDER BY date DESC').fetchall()
+    total_km = conn.execute('SELECT COALESCE(SUM(distance_km), 0) FROM mileage').fetchone()[0]
+    conn.close()
+    now = datetime.now().strftime('%B %d, %Y')
+    return render_template('mileage_print.html', trips=trips, total_km=total_km, now=now)
+
 
 # ============================================================
 # 6. SERVER START
